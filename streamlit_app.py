@@ -3,32 +3,23 @@ import datetime as dt
 import requests
 import streamlit as st
 
-
 # =========================
 # Config
 # =========================
 ATPT_OFCDC_SC_CODE = "B10"      # 서울특별시교육청
 SD_SCHUL_CODE = "7010194"       # 성보고등학교
 
-# 환경변수 NEIS_KEY가 있으면 그걸 우선 사용, 없으면 아래 기본값 사용
 DEFAULT_KEY = "90f59dd0310f49d1b0a46d80b55770e6"
 NEIS_KEY = os.getenv("NEIS_KEY", DEFAULT_KEY)
 
 BASE_URL = "https://open.neis.go.kr/hub/mealServiceDietInfo"
 
 
-# =========================
-# Helpers
-# =========================
 def ymd(d: dt.date) -> str:
     return d.strftime("%Y%m%d")
 
 
 def fetch_meal(date_: dt.date, meal_code: int) -> tuple[str | None, str | None]:
-    """
-    meal_code: 2=중식, 3=석식
-    return: (menu_text or None, error_message or None)
-    """
     params = {
         "KEY": NEIS_KEY,
         "Type": "json",
@@ -36,7 +27,7 @@ def fetch_meal(date_: dt.date, meal_code: int) -> tuple[str | None, str | None]:
         "pSize": 10,
         "ATPT_OFCDC_SC_CODE": ATPT_OFCDC_SC_CODE,
         "SD_SCHUL_CODE": SD_SCHUL_CODE,
-        "MMEAL_SC_CODE": str(meal_code),
+        "MMEAL_SC_CODE": str(meal_code),  # 2=중식, 3=석식
         "MLSV_YMD": ymd(date_),
     }
 
@@ -47,12 +38,9 @@ def fetch_meal(date_: dt.date, meal_code: int) -> tuple[str | None, str | None]:
     except Exception as e:
         return None, f"네트워크/요청 오류: {e}"
 
-    # 정상 응답이면 mealServiceDietInfo가 있고, [0]=head, [1]=row 형태가 흔함
-    # 데이터 없으면 RESULT 메시지만 오기도 함
     if "mealServiceDietInfo" not in data:
-        # RESULT 기반 메시지 처리
         result = data.get("RESULT")
-        if result and isinstance(result, dict):
+        if isinstance(result, dict):
             code = result.get("CODE", "")
             msg = result.get("MESSAGE", "데이터가 없습니다.")
             return None, f"{code} {msg}".strip()
@@ -65,7 +53,6 @@ def fetch_meal(date_: dt.date, meal_code: int) -> tuple[str | None, str | None]:
         dish = rows[0].get("DDISH_NM", "")
         if not dish:
             return None, "급식 없음"
-        # <br/> 줄바꿈만 처리 (알레르기 번호는 그대로 유지)
         dish = dish.replace("<br/>", "\n").replace("<br />", "\n")
         return dish.strip(), None
     except Exception:
@@ -75,63 +62,71 @@ def fetch_meal(date_: dt.date, meal_code: int) -> tuple[str | None, str | None]:
 # =========================
 # UI
 # =========================
-st.set_page_config(
-    page_title="성보고 급식",
-    page_icon="🍱",
-    layout="centered",
-)
+st.set_page_config(page_title="성보고 급식", page_icon="🍱", layout="centered")
 
-# 위젯 느낌 CSS (카드형)
+# 위젯용: 상단 잘림 방지 + 여백 압축 + 버튼/컨트롤 타이트
 st.markdown(
     """
     <style>
-      .block-container { max-width: 420px; padding-top: 16px; }
+      /* 전체 폭/여백: 위젯(작은 창)에서 잘림 방지 */
+      .block-container {
+        max-width: 420px;
+        padding-top: 6px;       /* 기존보다 위 여백 줄임 */
+        padding-bottom: 10px;
+      }
+
+      /* Streamlit 기본 header(상단) 여백 줄이기 */
+      header[data-testid="stHeader"] { height: 0px; }
+      div[data-testid="stToolbar"] { visibility: hidden; height: 0px; }
+
       .meal-card {
         border: 1px solid rgba(0,0,0,0.08);
         border-radius: 18px;
-        padding: 16px 16px 12px 16px;
+        padding: 14px 14px 12px 14px;
         background: rgba(255,255,255,0.88);
         box-shadow: 0 10px 30px rgba(0,0,0,0.06);
       }
+
       .title-row {
-        display:flex; justify-content:space-between; align-items:center;
-        margin-bottom: 8px;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        margin-bottom: 10px;
       }
+
       .title {
-        font-weight: 700; font-size: 16px;
+        font-weight: 700;
+        font-size: 16px;
       }
+
       .date {
-        font-size: 12px; opacity: 0.7;
+        font-size: 12px;
+        opacity: 0.7;
       }
-      .subtitle {
-        font-size: 12px; opacity: 0.7; margin-top: 10px;
-      }
+
+      /* 메뉴 텍스트 */
       .menu {
         white-space: pre-wrap;
         font-size: 14px;
-        line-height: 1.55;
+        line-height: 1.6;
         margin-top: 10px;
       }
-      .pill {
-        display:inline-block;
-        padding: 6px 10px;
-        border-radius: 999px;
-        border: 1px solid rgba(0,0,0,0.10);
-        background: rgba(245,245,245,0.8);
-        font-size: 12px;
-        margin-right: 6px;
-      }
+
+      /* 버튼 아래 여백 조금 줄이기 */
+      div[data-testid="column"] > div { padding-top: 0px; }
+      .stButton button { padding: 0.55rem 0.75rem; border-radius: 12px; }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# 상태 유지: 기본 중식
+# 기본 상태: 중식
 if "meal_mode" not in st.session_state:
     st.session_state.meal_mode = 2  # 2=중식, 3=석식
 
 today = dt.date.today()
 
+# 카드 헤더(상단 날짜는 카드 오른쪽에만 표시 / 아래 date_input 제거)
 st.markdown(
     f"""
     <div class="meal-card">
@@ -143,9 +138,10 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# 날짜 선택(공지 목적이면 오늘 고정도 가능하지만, 편의로 남김)
-picked = st.date_input("날짜", value=today, label_visibility="collapsed")
+# ✅ 날짜 입력 제거 (오늘 고정)
+picked = today
 
+# ✅ 버튼만 남기기
 col1, col2 = st.columns(2)
 with col1:
     if st.button("중식 ☀️", use_container_width=True):
@@ -154,26 +150,21 @@ with col2:
     if st.button("석식 🌙", use_container_width=True):
         st.session_state.meal_mode = 3
 
-mode_label = "중식 ☀️" if st.session_state.meal_mode == 2 else "석식 🌙"
-st.markdown(f'<span class="pill">{mode_label}</span>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">오늘의 메뉴</div>', unsafe_allow_html=True)
+# ✅ 버튼 밑의 “중식” pill 제거
+# ✅ “오늘의 메뉴” 문구 제거
 
 menu, err = fetch_meal(picked, st.session_state.meal_mode)
 
 if menu:
     st.markdown(f'<div class="menu">{menu}</div>', unsafe_allow_html=True)
 else:
-    # err가 “급식 없음”이면 깔끔하게, 아니면 오류 메시지 노출
-    if err and "급식 없음" not in err:
-        st.markdown(f'<div class="menu">급식 없음 🙂\n\n(참고: {err})</div>', unsafe_allow_html=True)
-    else:
-        st.markdown('<div class="menu">급식 없음 🙂</div>', unsafe_allow_html=True)
+    # 에러 메시지는 너무 길면 보기 싫으니, 위젯용으로는 깔끔하게 처리
+    st.markdown('<div class="menu">급식 없음 🙂</div>', unsafe_allow_html=True)
 
 st.markdown("</div>", unsafe_allow_html=True)
 
-# 하단 작은 정보
+# ✅ 설정/디버그는 접어두고, 필요 없으면 아래 블록 통째로 삭제해도 됨
 with st.expander("설정/디버그", expanded=False):
     st.write("ATPT_OFCDC_SC_CODE:", ATPT_OFCDC_SC_CODE)
     st.write("SD_SCHUL_CODE:", SD_SCHUL_CODE)
-    st.write("KEY 사용 방식: 환경변수 NEIS_KEY가 있으면 우선 사용 / 없으면 코드 기본값 사용")
-    st.caption("공지 목적이면 이 앱을 Edge 앱 모드로 설치하고 PowerToys Always on Top(Win+Ctrl+T)로 위젯처럼 고정하면 편해.")
+    st.caption("창을 더 작게 쓰면 Edge 앱 모드 + PowerToys Always on Top(Win+Ctrl+T) 조합이 편함.")
