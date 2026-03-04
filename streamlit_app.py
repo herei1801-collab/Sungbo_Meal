@@ -40,7 +40,7 @@ def fetch_meal(date_, meal_code):
         return "급식 없음 🙂"
 
 
-st.set_page_config(page_title="급식", layout="centered")
+st.set_page_config(page_title="급식", page_icon="logo.png", layout="centered")
 
 st.markdown("""
 <style>
