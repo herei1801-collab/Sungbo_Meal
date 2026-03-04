@@ -12,7 +12,7 @@ NEIS_KEY = os.getenv("NEIS_KEY", DEFAULT_KEY)
 BASE_URL = "https://open.neis.go.kr/hub/mealServiceDietInfo"
 
 
-def ymd(d: dt.date) -> str:
+def ymd(d):
     return d.strftime("%Y%m%d")
 
 
@@ -32,35 +32,42 @@ def fetch_meal(date_, meal_code):
 
         rows = data["mealServiceDietInfo"][1]["row"]
         dish = rows[0]["DDISH_NM"]
-        dish = dish.replace("<br/>", "\n")
 
-        return dish
+        return dish.replace("<br/>", "\n")
 
     except:
         return "급식 없음 🙂"
 
 
-st.set_page_config(page_title="급식", page_icon="logo.png", layout="centered")
+st.set_page_config(page_title="급식", layout="centered")
 
 st.markdown("""
 <style>
 
+/* 위젯 폭 */
 .block-container {
-    max-width: 300px;
-    padding-top: 50px;
+    max-width:260px;
+    padding-top:40px;
 }
 
-/* 버튼 영역 */
-.button-row {
-    display:flex;
-    gap:6px;
+/* 컬럼 줄바꿈 금지 + 간격 제거 */
+div[data-testid="stHorizontalBlock"] {
+    flex-wrap: nowrap !important;
+    gap:0px !important;
 }
 
-/* 버튼 작게 */
+/* 컬럼 폭 강제 축소 가능 */
+div[data-testid="column"] {
+    padding:0px !important;
+    min-width:0 !important;
+}
+
+/* 버튼 스타일 */
 .stButton button {
-    padding:2px 8px;
-    font-size:13px;
-    border-radius:8px;
+    width:100%;
+    padding:2px 6px;
+    font-size:12px;
+    border-radius:6px;
 }
 
 /* 메뉴 */
@@ -68,19 +75,7 @@ st.markdown("""
     white-space: pre-wrap;
     font-size:14px;
     line-height:1.6;
-    margin-top:8px;
-}
-
-/* ✅ columns 줄바꿈 금지: 창이 좁아져도 아래로 떨어지지 않게 */
-div[data-testid="stHorizontalBlock"] {
-  flex-wrap: nowrap !important;
-  gap: 1px !important;          /* 버튼 사이 간격 (원하는 값으로) */
-}
-
-/* ✅ 컬럼이 줄어들 수 있게(기본 min-width 때문에 줄바꿈되는 경우가 많음) */
-div[data-testid="column"] {
-  min-width: 0 !important;
-  flex: 1 1 0 !important;
+    margin-top:6px;
 }
 
 </style>
@@ -93,9 +88,8 @@ if "meal_mode" not in st.session_state:
 
 today = dt.date.today()
 
-
-# 버튼 (붙어서 나란히)
-col1, col2 = st.columns([1,1], gap=None)
+# 버튼
+col1, col2 = st.columns(2, gap="small")
 
 with col1:
     if st.button("중식"):
