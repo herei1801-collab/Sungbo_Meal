@@ -46,54 +46,44 @@ st.markdown("""
 <style>
 
 .block-container {
-    max-width: 320px;
-    padding-top: 30px;
+    max-width: 300px;
+    padding-top: 20px;
 }
 
-.date {
-    text-align:center;
-    font-size:14px;
-    margin-bottom:10px;
+/* 버튼 영역 */
+.button-row {
+    display:flex;
+    gap:6px;
 }
 
 /* 버튼 작게 */
 .stButton button {
-    padding:4px 10px;
+    padding:4px 12px;
     font-size:13px;
-    border-radius:10px;
+    border-radius:8px;
 }
 
-/* 버튼 간격 */
-div[data-testid="column"] {
-    padding-right:5px;
-}
-
+/* 메뉴 */
 .menu {
     white-space: pre-wrap;
     font-size:14px;
     line-height:1.6;
-    margin-top:10px;
+    margin-top:8px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
 
-# 상태
 if "meal_mode" not in st.session_state:
     st.session_state.meal_mode = 2
 
 
 today = dt.date.today()
 
-# 날짜
-st.markdown(
-    f'<div class="date">{today.strftime("%Y.%m.%d (%a)")}</div>',
-    unsafe_allow_html=True
-)
 
-# 버튼 (나란히)
-col1, col2 = st.columns(2)
+# 버튼 (붙어서 나란히)
+col1, col2 = st.columns([1,1], gap="small")
 
 with col1:
     if st.button("중식"):
