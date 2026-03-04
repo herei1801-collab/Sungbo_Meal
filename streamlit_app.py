@@ -139,8 +139,6 @@ today = dt.date.today()
 st.markdown(
     f"""
     <div class="meal-card">
-      <div class="title-row">
-        <div class="title">🍱 성보고 급식</div>
         <div class="date">{today.strftime("%Y.%m.%d (%a)")}</div>
       </div>
       <div class="btn-gap"></div>
