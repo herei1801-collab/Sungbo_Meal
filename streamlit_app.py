@@ -83,14 +83,6 @@ div[data-testid="column"] {
   flex: 1 1 0 !important;
 }
 
-/* (선택) 버튼이 컬럼 폭에 맞게 꽉 차게 */
-.stButton button {
-  width: 100% !important;
-  padding: 2px 8px !important; /* 버튼을 더 작게 */
-  font-size: 8px !important;
-  border-radius: 5px !important;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
