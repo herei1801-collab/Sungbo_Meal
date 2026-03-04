@@ -71,7 +71,7 @@ st.markdown(
       /* 전체 폭/여백: 위젯(작은 창)에서 잘림 방지 */
       .block-container {
         max-width: 420px;
-        padding-top: 20px;       /* 기존보다 위 여백 줄임 */
+        padding-top: 50px;       /* 기존보다 위 여백 줄임 */
         padding-bottom: 10px;
       }
 
