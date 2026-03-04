@@ -96,12 +96,12 @@ st.markdown(
       .title {
         font-weight: 700;
         font-size: 16px;
-        color: rgba(255,255,255,0.92);
+        color: rgba(18, 20, 24, 0.92);
       }
 
       .date {
         font-size: 12px;
-        color: rgba(255,255,255,0.65);
+        color: rgba(18, 20, 24, 0.92);
       }
 
       /* ✅ 헤더-버튼 사이 간격 */
