@@ -71,6 +71,26 @@ st.markdown("""
     margin-top:8px;
 }
 
+/* ✅ columns 줄바꿈 금지: 창이 좁아져도 아래로 떨어지지 않게 */
+div[data-testid="stHorizontalBlock"] {
+  flex-wrap: nowrap !important;
+  gap: 4px !important;          /* 버튼 사이 간격 (원하는 값으로) */
+}
+
+/* ✅ 컬럼이 줄어들 수 있게(기본 min-width 때문에 줄바꿈되는 경우가 많음) */
+div[data-testid="column"] {
+  min-width: 0 !important;
+  flex: 1 1 0 !important;
+}
+
+/* (선택) 버튼이 컬럼 폭에 맞게 꽉 차게 */
+.stButton button {
+  width: 100% !important;
+  padding: 2px 8px !important; /* 버튼을 더 작게 */
+  font-size: 12px !important;
+  border-radius: 8px !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
