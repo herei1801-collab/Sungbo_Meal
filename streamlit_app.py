@@ -47,7 +47,7 @@ st.markdown("""
 /* 위젯 폭 */
 .block-container {
     max-width:260px;
-    padding-top:40px;
+    padding-top:50px;
 }
 
 /* 컬럼 줄바꿈 금지 + 간격 제거 */
