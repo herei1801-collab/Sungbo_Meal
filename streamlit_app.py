@@ -87,8 +87,8 @@ div[data-testid="column"] {
 .stButton button {
   width: 100% !important;
   padding: 2px 8px !important; /* 버튼을 더 작게 */
-  font-size: 12px !important;
-  border-radius: 8px !important;
+  font-size: 8px !important;
+  border-radius: 5px !important;
 }
 
 </style>
