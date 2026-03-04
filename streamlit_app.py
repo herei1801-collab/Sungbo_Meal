@@ -58,7 +58,7 @@ st.markdown("""
 
 /* 버튼 작게 */
 .stButton button {
-    padding:4px 12px;
+    padding:2px 8px;
     font-size:13px;
     border-radius:8px;
 }
