@@ -83,7 +83,7 @@ today = dt.date.today()
 
 
 # 버튼 (붙어서 나란히)
-col1, col2 = st.columns([1,1], gap="None")
+col1, col2 = st.columns([1,1], gap="Small")
 
 with col1:
     if st.button("중식"):
