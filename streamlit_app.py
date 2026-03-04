@@ -47,7 +47,7 @@ st.markdown("""
 
 .block-container {
     max-width: 300px;
-    padding-top: 40px;
+    padding-top: 50px;
 }
 
 /* 버튼 영역 */
