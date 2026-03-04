@@ -64,14 +64,13 @@ def fetch_meal(date_: dt.date, meal_code: int) -> tuple[str | None, str | None]:
 # =========================
 st.set_page_config(page_title="성보고 급식", page_icon="🍱", layout="centered")
 
-# 위젯용: 상단 잘림 방지 + 여백 압축 + 버튼/컨트롤 타이트
 st.markdown(
     """
     <style>
       /* 전체 폭/여백: 위젯(작은 창)에서 잘림 방지 */
       .block-container {
         max-width: 420px;
-        padding-top: 50px;       /* 기존보다 위 여백 줄임 */
+        padding-top: 50px;
         padding-bottom: 10px;
       }
 
@@ -79,30 +78,35 @@ st.markdown(
       header[data-testid="stHeader"] { height: 0px; }
       div[data-testid="stToolbar"] { visibility: hidden; height: 0px; }
 
+      /* ✅ 카드 전체를 다크 톤으로 (버튼 톤과 맞추기) */
       .meal-card {
-        border: 1px solid rgba(0,0,0,0.08);
+        border: 1px solid rgba(255,255,255,0.10);
         border-radius: 18px;
         padding: 14px 14px 12px 14px;
-        background: rgba(255,255,255,0.88);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        background: rgba(18, 20, 24, 0.92);   /* 핵심: 상단 헤더도 같은 배경이 됨 */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
       }
 
       .title-row {
         display:flex;
         justify-content:space-between;
         align-items:center;
-        margin-bottom: 10px;
+        margin-bottom: 0px; /* 아래 간격은 btn-gap로 제어 */
       }
 
       .title {
         font-weight: 700;
         font-size: 16px;
+        color: rgba(255,255,255,0.92);
       }
 
       .date {
         font-size: 12px;
-        opacity: 0.7;
+        color: rgba(255,255,255,0.65);
       }
+
+      /* ✅ 헤더-버튼 사이 간격 */
+      .btn-gap { height: 10px; }  /* 여기 숫자만 키우면 더 벌어짐 */
 
       /* 메뉴 텍스트 */
       .menu {
@@ -110,11 +114,17 @@ st.markdown(
         font-size: 14px;
         line-height: 1.6;
         margin-top: 10px;
+        color: rgba(255,255,255,0.90);
       }
 
-      /* 버튼 아래 여백 조금 줄이기 */
+      /* 버튼/컬럼 여백 */
       div[data-testid="column"] > div { padding-top: 0px; }
-      .stButton button { padding: 0.55rem 0.75rem; border-radius: 12px; }
+
+      /* 버튼 모양 */
+      .stButton button {
+        padding: 0.55rem 0.75rem;
+        border-radius: 12px;
+      }
     </style>
     """,
     unsafe_allow_html=True,
@@ -126,7 +136,7 @@ if "meal_mode" not in st.session_state:
 
 today = dt.date.today()
 
-# 카드 헤더(상단 날짜는 카드 오른쪽에만 표시 / 아래 date_input 제거)
+# 카드 시작
 st.markdown(
     f"""
     <div class="meal-card">
@@ -134,14 +144,14 @@ st.markdown(
         <div class="title">🍱 성보고 급식</div>
         <div class="date">{today.strftime("%Y.%m.%d (%a)")}</div>
       </div>
+      <div class="btn-gap"></div>
     """,
     unsafe_allow_html=True,
 )
 
-# ✅ 날짜 입력 제거 (오늘 고정)
 picked = today
 
-# ✅ 버튼만 남기기
+# 버튼
 col1, col2 = st.columns(2)
 with col1:
     if st.button("중식 ☀️", use_container_width=True):
@@ -150,21 +160,12 @@ with col2:
     if st.button("석식 🌙", use_container_width=True):
         st.session_state.meal_mode = 3
 
-# ✅ 버튼 밑의 “중식” pill 제거
-# ✅ “오늘의 메뉴” 문구 제거
-
 menu, err = fetch_meal(picked, st.session_state.meal_mode)
 
 if menu:
     st.markdown(f'<div class="menu">{menu}</div>', unsafe_allow_html=True)
 else:
-    # 에러 메시지는 너무 길면 보기 싫으니, 위젯용으로는 깔끔하게 처리
     st.markdown('<div class="menu">급식 없음 🙂</div>', unsafe_allow_html=True)
 
+# 카드 끝
 st.markdown("</div>", unsafe_allow_html=True)
-
-# ✅ 설정/디버그는 접어두고, 필요 없으면 아래 블록 통째로 삭제해도 됨
-with st.expander("설정/디버그", expanded=False):
-    st.write("ATPT_OFCDC_SC_CODE:", ATPT_OFCDC_SC_CODE)
-    st.write("SD_SCHUL_CODE:", SD_SCHUL_CODE)
-    st.caption("창을 더 작게 쓰면 Edge 앱 모드 + PowerToys Always on Top(Win+Ctrl+T) 조합이 편함.")
