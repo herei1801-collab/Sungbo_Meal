@@ -74,7 +74,7 @@ st.markdown("""
 /* ✅ columns 줄바꿈 금지: 창이 좁아져도 아래로 떨어지지 않게 */
 div[data-testid="stHorizontalBlock"] {
   flex-wrap: nowrap !important;
-  gap: 4px !important;          /* 버튼 사이 간격 (원하는 값으로) */
+  gap: 1px !important;          /* 버튼 사이 간격 (원하는 값으로) */
 }
 
 /* ✅ 컬럼이 줄어들 수 있게(기본 min-width 때문에 줄바꿈되는 경우가 많음) */
