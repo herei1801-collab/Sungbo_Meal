@@ -83,8 +83,7 @@ st.markdown(
         border: 1px solid rgba(255,255,255,0.10);
         border-radius: 18px;
         padding: 14px 14px 12px 14px;
-        background: rgba(18, 20, 24, 0.92);   /* 핵심: 상단 헤더도 같은 배경이 됨 */
-        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+        background: white;   /* 핵심: 상단 헤더도 같은 배경이 됨 */
       }
 
       .title-row {
