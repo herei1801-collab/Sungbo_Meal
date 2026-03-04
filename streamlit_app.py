@@ -106,7 +106,7 @@ st.markdown(
       }
 
       /* ✅ 헤더-버튼 사이 간격 */
-      .btn-gap { height: 10px; }  /* 여기 숫자만 키우면 더 벌어짐 */
+      .btn-gap { height: 15px; }  /* 여기 숫자만 키우면 더 벌어짐 */
 
       /* 메뉴 텍스트 */
       .menu {
