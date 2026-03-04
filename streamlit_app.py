@@ -84,6 +84,7 @@ st.markdown(
         border-radius: 18px;
         padding: 14px 14px 12px 14px;
         background: rgba(18, 20, 24, 0.92);   /* 핵심: 상단 헤더도 같은 배경이 됨 */
+        box-shadow: 0 10px 30px rgba(0,0,0,0.35);
       }
 
       .title-row {
@@ -105,7 +106,7 @@ st.markdown(
       }
 
       /* ✅ 헤더-버튼 사이 간격 */
-      .btn-gap { height: 15px; }  /* 여기 숫자만 키우면 더 벌어짐 */
+      .btn-gap { height: 10px; }  /* 여기 숫자만 키우면 더 벌어짐 */
 
       /* 메뉴 텍스트 */
       .menu {
@@ -168,3 +169,9 @@ else:
 
 # 카드 끝
 st.markdown("</div>", unsafe_allow_html=True)
+
+# (원하면 아래 expander는 삭제 가능)
+with st.expander("설정/디버그", expanded=False):
+    st.write("ATPT_OFCDC_SC_CODE:", ATPT_OFCDC_SC_CODE)
+    st.write("SD_SCHUL_CODE:", SD_SCHUL_CODE)
+    st.caption("창을 더 작게 쓰면 Edge 앱 모드 + PowerToys Always on Top(Win+Ctrl+T) 조합이 편함.")
